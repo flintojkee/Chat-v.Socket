@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flintojkee/Chat-v.AJAX.git"
+    "url": "git+https://github.com/flintojkee/Chat-v.Socket.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/flintojkee/Chat-v.AJAX/issues"
   },
-  "homepage": "https://github.com/flintojkee/Chat-v.AJAX#readme"
+  "homepage": "https://github.com/flintojkee/Chat-v.Socket#readme"
 }

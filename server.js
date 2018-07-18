@@ -37,7 +37,14 @@ io.on('connection', function (socket) {
     });
 
     socket.on("user", function (user) {
-        users.push(user);
+        if(users.findIndex(u => u.nickName===user.nickName)===-1){
+            users.push(user);
+        }
+    });
+
+    socket.on("updateUser", function (user, status) {
+            userIndex =  users.findIndex(u => u.nickName===user.nickName);
+            users[userIndex].status = status;
     });
 
     socket.on('typing', (userNickname)=>{
@@ -47,10 +54,12 @@ io.on('connection', function (socket) {
     socket.on('not typing', (userNickname)=>{
         socket.broadcast.emit('not typing', userNickname);
     });
-    socket.on('history', (messages)=>{
+    socket.on('history', ()=>{
         socket.emit('history', messages);
     });
-    socket.emit('users', users);
+    socket.on('users', ()=>{
+        socket.emit('users', users);
+    });
 
 
 });

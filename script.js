@@ -1,8 +1,9 @@
 const chatPage = document.getElementById("chat-page");
 const loginPage = document.getElementById("login-page");
 const socket = io.connect();
-
 let userName, userNickname;
+
+
 function main() {
     const userHeader = document.getElementById('userHeader');
     const nameButton = document.getElementById('nameButton');
@@ -13,7 +14,8 @@ function main() {
     const text = document.getElementById('text');
     const textSubmit = document.getElementById('textSubmit');
     let typing = document.createElement('span');
-    userHeader.innerText = userName+" "+userNickname;
+    userHeader.innerText = "Name: "+userName+", NickName: "+userNickname;
+
     textSubmit.onclick = function () {
         let data = {
             name:userNickname,
@@ -44,17 +46,18 @@ function main() {
             }
         }
     });
+
+
     socket.on('not typing', (userNickname) =>{
-        console.log(1);
         $("span:contains("+userNickname+")").remove()
     });
 
-    socket.on(users, function (msg) {
+    socket.on("users", function (user) {
         users.innerHTML = '';
         for(let i in user){
             if(user.hasOwnProperty(i)){
                 let el = document.createElement('li');
-                el.innerText = "Name: "+user[i].name + " Nickname: " + user[i].nickName;
+                el.innerText = "Name: "+user[i].name + " Nickname: " + user[i].nickName +", Status:"+user[i].status;
                 users.appendChild(el);
             }
         }
@@ -84,13 +87,14 @@ function main() {
         }
     })
 
-};
+}
 
 
 
 function login() {
     let nameInput = document.getElementById('name-input');
     let nickNameInput = document.getElementById('nickname-input');
+
 
     if (nameInput.value.trim() === '' || nickNameInput.value.trim()==='') {
         return false
@@ -101,12 +105,43 @@ function login() {
         userNickname = nickNameInput.value;
         let user ={
             name: userName,
-            nickName: userNickname
+            nickName: userNickname,
+            status:"just appeared"
         };
+
+        socket.emit('user', user);
+        socket.emit('history');
+        socket.emit('users');
         main();
+        setOnline()
 
     }
 }
+
+function setOnline() {
+    setTimeout(function(){
+        let status = "online";
+        let user ={
+            name: userName,
+            nickName: userNickname,
+            status:"just appeared"
+        };
+        socket.emit('updateUser', user,status);
+        socket.on("users", function (user) {
+            users.innerHTML = '';
+            console.log(user);
+            for(let i in user){
+                if(user.hasOwnProperty(i)){
+                    let el = document.createElement('li');
+                    el.innerText = "Name: "+user[i].name + " Nickname: " + user[i].nickName +", Status:"+user[i].status;
+                    users.appendChild(el);
+                }
+            }
+        });
+        }, 3000);
+
+}
+
 
 function isMentioned(message,username) {
     let mention =  "@"+username;
